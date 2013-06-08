@@ -1,0 +1,168 @@
+<?php
+
+/**
+ * @file
+ * General functions and hook implementations.
+ *
+ * @see http://harvesthq.github.com/clickify/
+ */
+
+/**
+ * Widget that clickify can be applied to
+ */
+define('clickify_WIDGET', 'options_select');
+
+/**
+ * Implements hook_init().
+ */
+function clickify_init() {
+  libraries_load('clickify');
+  drupal_add_css(drupal_get_path('module', 'clickify') . '/css/clickify-drupal.css');
+  drupal_add_js(array(
+    'clickify' => array(
+      'selector' => variable_get('clickify_jquery_selector', 'select:visible'),
+      'minimum' => variable_get('clickify_minimum', 20),
+      'minimum_width' => variable_get('clickify_minimum_width', 200),
+      'search_contains' => (variable_get('clickify_search_contains', FALSE)) ? TRUE : FALSE,
+      'placeholder_text_multiple' => t(variable_get('clickify_placeholder_text_multiple', 'Choose some options')),
+      'placeholder_text_single' => t(variable_get('clickify_placeholder_text_single', 'Choose an option')),
+      'no_results_text' => t(variable_get('clickify_no_results_text', 'No results match')),
+    ),
+  ), 'setting');
+  drupal_add_js(drupal_get_path('module', 'clickify') . '/clickify.js',
+    array('type' => 'file', 'scope' => 'footer', 'weight' => JS_DEFAULT)
+  );
+}
+
+/**
+ * Implements hook_menu().
+ */
+function clickify_menu() {
+  $items = array();
+
+  $items['admin/config/user-interface/clickify'] = array(
+    'title' => 'clickify',
+    'description' => 'Configuration for clickify plugin',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('clickify_admin_settings'),
+    'access arguments' => array('administer site configuration'),
+    'file' => 'clickify.admin.inc',
+  );
+
+  return $items;
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function clickify_form_field_ui_field_edit_form_alter(&$form, $form_state) {
+  if (isset($form['instance']['widget']['type']['#value'])) {
+    $type = $form['instance']['widget']['type']['#value'];
+    if ($type == clickify_WIDGET) {
+      $field = $form['#field'];
+      $instance = field_info_instance($form['instance']['entity_type']['#value'], $form['instance']['field_name']['#value'], $form['instance']['bundle']['#value']);
+      $form['instance'] += clickify_field_widget_settings_form($field, $instance);
+    }
+  }
+}
+
+/**
+ * Implements hook_field_widget_info_alter().
+ *
+ * A list of settings needed by clickify module for widgets.
+ */
+function clickify_field_widget_info_alter(&$info) {
+  $settings = array(
+    'apply_clickify' => 0,
+  );
+
+  if (isset($info[clickify_WIDGET]['settings'])) {
+    $info[clickify_WIDGET]['settings'] += $settings;
+  }
+}
+
+/**
+ * Implements hook_field_widget_settings_form().
+ */
+function clickify_field_widget_settings_form($field, $instance) {
+  $widget = $instance['widget'];
+  $settings = $widget['settings'];
+
+  $form['clickify'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('clickify'),
+    '#collapsed' => TRUE,
+    '#collapsible' => TRUE,
+    '#parents' => array('instance', 'widget', 'settings'),
+  );
+
+  $form['clickify']['apply_clickify'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Apply clickify on this field'),
+    '#default_value' => $settings['apply_clickify'],
+  );
+
+  return $form;
+}
+
+/**
+ * Implements hook_field_widget_form_alter().
+ */
+function clickify_field_widget_form_alter(&$element, &$form_state, $context) {
+  $type = $context['instance']['widget']['type'];
+  if ($type == clickify_WIDGET) {
+    $settings = $context['instance']['widget']['settings'];
+    if (!empty($settings['apply_clickify'])) {
+      $element['#attributes']['class'][] = 'clickify-widget';
+    }
+  }
+}
+
+/**
+ * Implements hook_libraries_info().
+ */
+function clickify_libraries_info() {
+  $libraries['clickify'] = array(
+    'name' => 'clickify',
+    'vendor url' => 'http://harvesthq.github.com/clickify/',
+    'download url' => 'https://github.com/harvesthq/clickify.git',
+    'path' => 'clickify',
+    'version arguments' => array(
+      'file' => 'VERSION',
+      'pattern' => '/(.*)/',
+      'lines' => 1,
+    ),
+    'files' => array(
+      'js' => array(
+        'clickify.jquery.min.js',
+      ),
+      'css' => array(
+        'clickify.css',
+      ),
+    ),
+    'variants' => array(
+      'minified' => array(
+        'files' => array(
+          'js' => array(
+            'clickify.jquery.min.js',
+          ),
+          'css' => array(
+            'clickify.css',
+          ),
+        ),
+      ),
+      'source' => array(
+        'files' => array(
+          'js' => array(
+            'clickify.jquery.js',
+          ),
+          'css' => array(
+            'clickify.css',
+          ),
+        ),
+      ),
+    ),
+  );
+
+  return $libraries;
+}

@@ -1,0 +1,7 @@
+/**
+ * @file
+ * Drupal-specific CSS fixes for the clickify module
+ */
+.chzn-container {
+  display: table !important;
+}
