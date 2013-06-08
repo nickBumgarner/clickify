@@ -38,11 +38,6 @@ function clickify_requirements($phase) {
  */
 function clickify_uninstall() {
   // Delete created variables.
-  variable_del('clickify_minimum');
-  variable_del('clickify_minimum_width');
-  variable_del('clickify_search_contains');
   variable_del('clickify_jquery_selector');
-  variable_del('clickify_placeholder_text_multiple');
-  variable_del('clickify_placeholder_text_single');
-  variable_del('clickify_no_results_text');
+
 }
