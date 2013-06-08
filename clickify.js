@@ -1,24 +1,14 @@
-(function($) {
+(function ($) {
   Drupal.behaviors.clickify = {
-    attach: function(context) {
-
+    attach: function (context) {
       $(Drupal.settings.clickify.selector, context)
-
-        .each(function() {
+          .each(function () {
             $(this).css('cursor', 'pointer');
-            $(this).click(function(){
-              window.location=$(this).find("a").attr("href");
+            $(this).click(function () {
+              window.location = $(this).find("a").attr("href");
               return false;
             });
-
-
-
-      });
-      $(Drupal.settings.clickify.selector, context)
-
-
+          });
+      }
     }
-  }
-
-
-})(jQuery);
+  })(jQuery);

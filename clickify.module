@@ -41,8 +41,8 @@ function clickify_menu() {
   $items = array();
 
   $items['admin/config/user-interface/clickify'] = array(
-    'title' => 'clickify',
-    'description' => 'Configuration for clickify plugin',
+    'title' => 'Clickify',
+    'description' => 'Configuration for Clickify plugin',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('clickify_admin_settings'),
     'access arguments' => array('administer site configuration'),

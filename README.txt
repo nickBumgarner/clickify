@@ -1,10 +1,8 @@
 -- SUMMARY --
 
-clickify uses the clickify jQuery plugin to make your <select> elements more user-friendly.
-
+Clickify utilizes a simple script and turns an ordinary HTML element into a clickable object.
 
 -- INSTALLATION --
 
-  1. Download the clickify jQuery plugin (http://harvesthq.github.com/clickify/) and extract the file under sites/all/libraries.
-  2. Download and enable the module.
-  3. Configure at Administer > Configuration > User interface > clickify (requires administer site configuration permission)
+  1. Download and enable the module.
+  2. Configure at Administer > Configuration > User interface > clickify (requires administer site configuration permission)
