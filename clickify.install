@@ -1,0 +1,48 @@
+<?php
+/**
+ * @file
+ * Installation and uninstallation functions.
+ */
+
+/**
+ * Implements hook_requirements().
+ */
+function clickify_requirements($phase) {
+  $requirements = array();
+
+  if ($phase == 'runtime') {
+    $t = get_t();
+    $library = libraries_detect('clickify');
+
+    if (empty($library['installed'])) {
+      $requirements['clickify_js'] = array(
+        'title' => $t('clickify JavaScript file'),
+        'severity' => REQUIREMENT_ERROR,
+        'description' => $t('You need to download the !clickify and extract the entire contents of the archive into the %path directory on your server.', array('!clickify' => l($t('clickify JavaScript file'), $library['download url']), '%path' => 'sites/all/libraries')),
+      );
+    }
+    else {
+      $requirements['clickify_js'] = array(
+        'title' => $t('clickify JavaScript file'),
+        'severity' => REQUIREMENT_OK,
+        'value' => $library['version'],
+      );
+    }
+  }
+
+  return $requirements;
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function clickify_uninstall() {
+  // Delete created variables.
+  variable_del('clickify_minimum');
+  variable_del('clickify_minimum_width');
+  variable_del('clickify_search_contains');
+  variable_del('clickify_jquery_selector');
+  variable_del('clickify_placeholder_text_multiple');
+  variable_del('clickify_placeholder_text_single');
+  variable_del('clickify_no_results_text');
+}
